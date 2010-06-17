@@ -1,0 +1,20 @@
+== Sequel Auto
+
+This plug-in makes defining your models for accessing a database as easy as:
+
+  Sequel::Model.plugin :auto
+  Sequel::Model.auto_models
+
+You can also use the automatic retrieval of associations when you are defining
+your models by hand:
+
+  Sequel::Model.plugin :auto
+
+  class Foo < Sequel::Model
+    auto_assoc
+
+    ...
+  end
+
+This plugin currently works for PostgreSQL only!
+More databases will be supported soon.

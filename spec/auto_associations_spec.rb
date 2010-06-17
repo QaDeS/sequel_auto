@@ -13,6 +13,7 @@ describe Sequel::Plugins::Auto do
       String :name
       foreign_key :parent_id, :nodes
     end
+
     class Node < Sequel::Model; auto_assoc; end
     Node.create(:name => 'Root').add_child(Node.new(:name => 'Child 1'))
 
@@ -33,6 +34,7 @@ describe Sequel::Plugins::Auto do
       String :username
       foreign_key :user_id, :users
     end
+
     class User < Sequel::Model; auto_assoc; end
     class Login < Sequel::Model; auto_assoc; end
     User.create(:name => 'Me').add_login(Login.new(:username => 'uname1'))
@@ -55,6 +57,7 @@ describe Sequel::Plugins::Auto do
       foreign_key :metadata_id, :metadatas
     end
     DB.add_index :contents, :metadata_id, :unique => true
+
     class Metadata < Sequel::Model; auto_assoc; end
     class Content < Sequel::Model; auto_assoc; end
     Metadata.create(:filename => 'file1').content = Content.new(:txt => 'foobar')
@@ -81,6 +84,7 @@ describe Sequel::Plugins::Auto do
       foreign_key :employee_id, :employees
     end
     DB.add_index :departments_employees, [:department_id, :employee_id], :unique => true
+
     class Department < Sequel::Model; auto_assoc; end
     class Employee < Sequel::Model; auto_assoc; end
     Department.create(:name => 'Development').add_employee Employee.new(:name => 'Me')
@@ -107,7 +111,9 @@ describe Sequel::Plugins::Auto do
       foreign_key :foo_id, :foos
       foreign_key :bar_id, :bars
     end
+
     classes = Sequel::Model.auto_models
+    
     classes.should include(Foo, Bar)
     Foo.create(:name => 'MyFoo').add_bar Bar.create(:name => 'MyBar')
     foo = Foo.first

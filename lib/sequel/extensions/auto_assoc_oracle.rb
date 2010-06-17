@@ -1,7 +1,10 @@
 module Sequel
   module Oracle
     class Database
-      SELECT_ASSOCIATIONS = proc do |schema, table|
+      # TODO check if default_schema! should be implemented
+
+      # TODO group by constraint and aggregate columns in an array
+      def select_associations(schema, table)
         schema_select = if schema
           "AND ac.owner   = '#{schema.upcase}'"
         end
