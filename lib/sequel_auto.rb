@@ -25,7 +25,8 @@ module Sequel
         def auto_assoc(opts = {})
           except = opts[:except] || []
 
-          relations = process_join_tables(db.schema_parse_associations(table_name))
+          assocs = db.schema_parse_associations(table_name)
+          relations = process_join_tables(assocs)
 
           relations.each do |row|
             src_tbl = row[:src_tbl]

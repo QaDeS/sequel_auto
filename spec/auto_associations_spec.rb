@@ -1,10 +1,15 @@
+# TODO extract into helper
 require 'sequel'
-DB = Sequel.connect 'postgres://test:test@localhost:5433/postgres'
+URL = 'oracle://test:test@localhost/XE'
+#URL = 'postgres://test:test@localhost:5433/postgres'
+#URL = 'sqlite://test.db'
+#URL = 'mysql://test:test@localhost/test'
+DB = Sequel.connect URL
 
 Sequel::Model.plugin :auto
 DB.default_schema!
-DB.tables.each { |t| puts "dropping #{t}"; DB.drop_table t }
-
+%w[nodes logins users contents metadatas departments_employees employees
+departments foos_bars bars foos].each { |t| puts "dropping #{t}"; begin DB.drop_table t rescue puts $!; end }
 
 describe Sequel::Plugins::Auto do
   it "should create self references" do
@@ -69,7 +74,7 @@ describe Sequel::Plugins::Auto do
     content.metadatum.should == meta
   end
 
-  it "should many_to_many references" do
+  it "should create many_to_many references" do
     DB.create_table :departments do
       primary_key :id
       String :name
@@ -83,7 +88,7 @@ describe Sequel::Plugins::Auto do
       foreign_key :department_id, :departments
       foreign_key :employee_id, :employees
     end
-    DB.add_index :departments_employees, [:department_id, :employee_id], :unique => true
+    DB.add_index :departments_employees, [:department_id, :employee_id], :unique => true, :name => :dep_emp_ixd
 
     class Department < Sequel::Model; auto_assoc; end
     class Employee < Sequel::Model; auto_assoc; end
