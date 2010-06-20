@@ -117,6 +117,7 @@ module Sequel
         def process_join_tables(relations)
           joins = {}
           relations.dup.each do |row|
+            # puts row.inspect  # for debugging relationship retrieving
             src_tbl = row[:src_tbl]
             if join = (joins[src_tbl] ||= join_table_assoc(src_tbl))
               relations.delete(row)

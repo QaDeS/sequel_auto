@@ -1,7 +1,10 @@
 module Sequel
   module Oracle
     class Database
+
       alias schema_parse_table_without_pk schema_parse_table
+
+      # Adds the :primary_key marker to the table schema
       def schema_parse_table(table, opts = {})
         result = schema_parse_table_without_pk(table, opts)
         schema, table = schema_and_table(table)
@@ -76,29 +79,6 @@ module Sequel
         EOF
       end
 
-      def translate_arrays(res)
-        group(res, :cons, :src_col, :dst_col).values
-      end
-
-      def group(res, group_key, *agg_keys)
-        result = {}
-        res.each do |r|
-          yield r if block_given?
-          h=Hash[r.map do |k, val|
-              v = val.is_a?(String) ? val.downcase.to_sym : val
-              agg_keys.member?(k) ? [k,[v]] : [k, v]
-            end]
-          if r = result[g = h.delete(group_key)]
-            agg_keys.each do |key|
-              r[key] = Array(r[key]) << h[key]
-            end
-          else
-            result[g] = h
-          end
-        end
-        result
-      end
-      
     end
   end
 end
